@@ -1,7 +1,10 @@
 package br.com.caelum.pm73.dao.builder;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
+import br.com.caelum.pm73.dominio.Lance;
 import br.com.caelum.pm73.dominio.Leilao;
 import br.com.caelum.pm73.dominio.Usuario;
 
@@ -13,6 +16,8 @@ public class LeilaoBuilder {
     private boolean usado;
     private Calendar dataAbertura;
     private boolean encerrado;
+    
+    private List<Lance> lances = new ArrayList<Lance>();
 
     public LeilaoBuilder() {
         this.dono = new Usuario("Joao da Silva", "joao@silva.com.br");
@@ -37,6 +42,12 @@ public class LeilaoBuilder {
         return this;
     }
 
+    public LeilaoBuilder comLance(Calendar data, Usuario usuario, double valor) {
+    	Lance lance = new Lance(data, usuario, valor, null);
+    	lances.add(lance);
+        return this;
+    }
+    
     public LeilaoBuilder usado() {
         this.usado = true;
         return this;
@@ -59,6 +70,13 @@ public class LeilaoBuilder {
     public Leilao constroi() {
         Leilao leilao = new Leilao(nome, valor, dono, usado);
         leilao.setDataAbertura(dataAbertura);
+        
+        if(lances != null && lances.size() > 0) {
+        	for(Lance lance : lances) {
+        		leilao.adicionaLance(lance);
+        	}
+        }
+        
         if(encerrado) leilao.encerra();
 
         return leilao;
