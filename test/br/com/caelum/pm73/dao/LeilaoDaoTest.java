@@ -263,4 +263,60 @@ public class LeilaoDaoTest {
         assertEquals(1, leiloes.size());
         assertEquals(3200.0, leiloes.get(0).getValorInicial(), 0.00001);
     }
+    
+    @Test
+    public void listaSomenteOsLeiloesDoUsuario() throws Exception {
+        Usuario dono = new Usuario("Mauricio", "m@a.com");
+        Usuario comprador = new Usuario("Victor", "v@v.com");
+        Usuario comprador2 = new Usuario("Guilherme", "g@g.com");
+        
+        Leilao leilao = new LeilaoBuilder()
+            .comDono(dono)
+            .comValor(50.0)
+            .comLance(Calendar.getInstance(), comprador, 100.0)
+            .comLance(Calendar.getInstance(), comprador2, 200.0)
+            .constroi();
+        
+        Leilao leilao2 = new LeilaoBuilder()
+            .comDono(dono)
+            .comValor(250.0)
+            .comLance(Calendar.getInstance(), comprador2, 100.0)
+            .constroi();
+        
+        usuarioDao.salvar(dono);
+        usuarioDao.salvar(comprador);
+        usuarioDao.salvar(comprador2);
+        leilaoDao.salvar(leilao);
+        leilaoDao.salvar(leilao2);
+
+        List<Leilao> leiloes = leilaoDao.listaLeiloesDoUsuario(comprador);
+        assertEquals(1, leiloes.size());
+        assertEquals(leilao, leiloes.get(0));
+    }
+    
+    @Test
+    public void devolveAMediaDoValorInicialDosLeiloesQueOUsuarioParticipou(){
+        Usuario dono = new Usuario("Mauricio", "m@a.com");
+        Usuario comprador = new Usuario("Victor", "v@v.com");
+        
+        Leilao leilao = new LeilaoBuilder()
+            .comDono(dono)
+            .comValor(50.0)
+            .comLance(Calendar.getInstance(), comprador, 100.0)
+            .comLance(Calendar.getInstance(), comprador, 200.0)
+            .constroi();
+        
+        Leilao leilao2 = new LeilaoBuilder()
+            .comDono(dono)
+            .comValor(250.0)
+            .comLance(Calendar.getInstance(), comprador, 100.0)
+            .constroi();
+        
+        usuarioDao.salvar(dono);
+        usuarioDao.salvar(comprador);
+        leilaoDao.salvar(leilao);
+        leilaoDao.salvar(leilao2);
+
+        assertEquals(150.0, leilaoDao.getValorInicialMedioDoUsuario(comprador), 0.001);
+    }
 }

@@ -90,11 +90,20 @@ public class LeilaoDao {
 								   "where lance.usuario = :usuario")
 				.setParameter("usuario", usuario).list();
 	}
+
+//	*select errada*
+//	public double getValorInicialMedioDoUsuario(Usuario usuario) {
+//		return (Double) session.createQuery("select avg(lance.leilao.valorInicial) " +
+//											"from Lance lance " +
+//											"where lance.usuario = :usuario")
+//					.setParameter("usuario", usuario)
+//					.uniqueResult();
+//	}
 	
 	public double getValorInicialMedioDoUsuario(Usuario usuario) {
-		return (Double) session.createQuery("select avg(lance.leilao.valorInicial) " +
-											"from Lance lance " +
-											"where lance.usuario = :usuario")
+		return (Double) session.createQuery("select avg(leilao.valorInicial) " +
+											"from Leilao leilao " +
+											"where leilao in (select lance.leilao from Lance lance where lance.usuario = :usuario)")
 					.setParameter("usuario", usuario)
 					.uniqueResult();
 	}
